@@ -125,13 +125,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { User, Edit, Trash2, Plus, RefreshCw } from "lucide-react";
+import { useRouter } from "next/navigation"; // ✅ استيراد useRouter
 
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [editingUser, setEditingUser] = useState(null);
-
+  const router = useRouter(); // ✅ تهيئة التوجيه
   useEffect(() => {
     axios.get("/api/Users").then((res) => setUsers(res.data));
   }, []);
@@ -142,10 +143,15 @@ export default function UsersPage() {
       return;
     }
     try {
-      const res = await axios.post("/api/Users", { name, email });
+      const res = await axios.post(
+        "/api/Users",
+        { name, email },
+        { withCredentials: true }
+      );
       setUsers([...users, res.data]);
       setName("");
       setEmail("");
+      router.push("/profile");
     } catch (error) {
       alert("Error adding user");
     }
